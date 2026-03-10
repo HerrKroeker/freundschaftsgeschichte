@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Interaktive iPad-Geschichte – Schwierige Variante</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    text-align: center;
+    background: #f5f5f5;
+}
+
+#story {
+    font-size: 20px;
+    margin-bottom: 30px;
+    min-height: 150px;
+    text-align: left;
+}
+
+#choices {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.choice-button {
+    flex: 1;
+    padding: 14px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.choice-button:hover {
+    background: #388E3C;
+}
+
+#summary, #question {
+    font-size: 22px;
+    margin-top: 30px;
+    text-align: left;
+}
+</style>
+</head>
+<body>
+
+<h2>Interaktive iPad-Geschichte – Schwierige Variante</h2>
+<div id="story"></div>
+<div id="choices"></div>
+<div id="summary"></div>
+<div id="question"></div>
+
+<script>
+// --- Fester Anfang ---
+const beginning = "Endlich Pause! Amir rannte schnell auf den Schulhof, damit er als erstes beim Fußballfeld sein könnte. Als er die Tür nach draußen aufreißen wollte, stellte sich Jonas sehr ungeschickt in den Weg. Amir konnte nicht mehr bremsen und rempelte ihn an. Klirrend fiel ein iPad zu Boden... 'Ich wollte das nicht', versicherte Amir.";
+
+// --- Richtiger Pfad (A → C → A → B) ---
+const correctPath = ['A','C','A','B'];
+
+// --- Choices für jede Station (Texte ohne A/B/C) ---
+const choices = [
+    // Steigerung
+    [
+        "Jonas hob das iPad langsam auf und drehte es um. Das Display war komplett zersplittert. Feine Risse zogen sich über das ganze Display und an einer Ecke war ein ganzes Stück Glas herausgebrochen. Jonas schaute Amir wütend an: „Das wirst du mir bezahlen!“",
+        "Jonas hob das iPad langsam auf und betrachtete es von allen Seiten. Eine Stelle rieb er kurz mit dem Daumen, doch das war nur ein Fleck. „Nochmal Glück gehabt“, sagte er kurz und legte Amir eine Hand auf die Schulter. Amir atmete erleichtert auf. Dann drehte er sich um und lief weiter zum Fußballplatz.",
+        "Jonas hob das iPad langsam auf und drehte es um. Das Display war komplett zersplittert. Feine Risse zogen sich über das ganze Display. Bevor Amir sich entschuldigen konnte, tröstete Jonas ihn: „Ist nicht so schlimm! Genau für solche Fälle haben wir doch eine Versicherung. Geh ruhig weiter, ich kümmere mich darum!“"
+    ],
+    // Höhepunkt
+    [
+        "Amir tat das Missgeschick schrecklich leid. „Es ist meine Schuld und ich werde den Schaden sofort bezahlen!“ „Das will ich auch hoffe“, drohte Jonas weiter, „Sonst kannst du dein blaues Wunder erleben!“ „Nein, keine Sorge. Meine Mutter wird dir gleich nach der Schule ein neues Gerät kaufen!“",
+        "Amir sagte: „Ja kein Problem, das Gerät ist eh versichert. Stell dich nicht so an.“ „Was soll das denn heißen?“, fragte Jonas verblüfft nach. „Geh einfach zum Sekretariat, da kriegst du ein neues Gerät.“ Jonas war sofort erleichtert. „Das mache ich!“ antwortete er und ging los. So konnte Amir weiter zum Fußball laufen.",
+        "Kurz war Amir erschrocken, doch dann wehrte er sich: „Du bist doch selbst schuld! Wieso läufst du mir auch so blöd in den Weg?“ Das hörte Jonas gar nicht gerne. Er schubste Amir kräftig, sodass dieser an die Tür flog. „Na, willst du noch mehr Stress?“ Amir duckte sich und rieb sich den wunden Arm. Was sollte er nur tun?"
+    ],
+    // Wendepunkt
+    [
+        "Jonas holte zu einem weiteren Schlag aus. Amir duckte sich noch tiefer, um dem Schlag auszuweichen. Da fiel ihm etwas Seltsames auf: „Dein iPad war ja schon kaputt!“ schrie er plötzlich mit neuem Mut. Jonas stoppte plötzlich. „Wie kommst du darauf?“ „Da sind ganze Stücke aus deinem Display gebrochen, aber auf dem Boden sind keine Scherben zu sehen.“",
+        "Jonas holte zu einem weiteren Schlag aus. Amir duckte sich noch tiefer, um dem Schlag auszuweichen. Es reichte aber nicht. Der Schlag traf ihn mit voller Wucht an der Schläfe und alles drehte sich um ihn herum. Zum Glück kam in dem Augenblick ein Lehrer vorbei und beendete den Kampf. „Jonas, du kommst jetzt sofort mit zur Schulleitung!“ Damit war das Thema für diesen Tag beendet.",
+        "Jonas holte zu einem weiteren Schlag aus. Er kam aber nicht mehr dazu. Amir trat ihm mit voller Wucht in den Magen. Voller Schmerzen beugte er sich nach vorne. „Ich kann nicht mehr!“, keuchte er. „Okay, dann vergessen wir das Thema lieber“, warnte ihn Amir. „Na gut, wie du willst!“ willigte Jonas ein."
+    ],
+    // Ende
+    [
+        "Amir wurde wütend: „Du wolltest mir die ganze Schuld in die Schuhe schieben.“ Jonas fühlte sich ertappt und wusste nicht, was er sagen sollte. „Das ist echt so ehrenlos von dir!“ ergänzte Amir und drehte sich um. Schnell lief er weiter zum Fußballplatz. Jonas steckte sein kaputtes iPad weg und ging in die Mensa.",
+        "Amir wurde wütend: „Du wolltest mir die ganze Schuld in die Schuhe schieben.“ Jonas fühlte sich ertappt und musste sich nun entschuldigen: „Sorry, ich hatte nur so Angst, es meinen Eltern zu erzählen…“ „Aber das iPad ist doch versichert“, versuchte Amir ihn zu trösten. „Wirklich?“, fragte Jonas ungläubig. „Ja komm mit, ich zeige dir, wie dein iPad umsonst repariert wird.“",
+        "Jonas wurde wütend: „Stimmt doch gar nicht. Hier liegt doch Glas!“ Amir schaute noch einmal genauer hin. Tatsächlich! Halb unter der Heizung lagen Glassplitter. „Ja okay, dann bezahle ich das iPad halt doch“, gab er geknickt nach. „Na endlich!“, atmete Jonas auf."
+    ]
+];
+
+let step = 0;
+let path = [];
+let storySequence = [];
+
+// --- Start ---
+function showStart(){
+    document.getElementById("story").innerText = beginning;
+    document.getElementById("choices").innerHTML = `<button class="choice-button" onclick="nextScene()">Start!</button>`;
+}
+
+// --- Nächste Szene ---
+function nextScene(){
+    if(step >= choices.length){
+        endStory();
+        return;
+    }
+
+    let choiceHTML = "";
+    for(let i=0;i<3;i++){
+        choiceHTML += `<button class="choice-button" onclick="choose(${i})">${choices[step][i]}</button>`;
+    }
+    document.getElementById("story").innerText = "";
+    document.getElementById("choices").innerHTML = choiceHTML;
+}
+
+// --- Auswahl treffen ---
+function choose(index){
+    const letter = ['A','B','C'][index];
+    path.push(letter);
+    storySequence.push(choices[step][index]);
+
+    // Prüfen: falsche Wahl → sofortige Beendigung
+    if(letter !== correctPath[step]){
+        endStory();
+        return;
+    }
+
+    step++;
+    setTimeout(nextScene, 1000);
+}
+
+// --- Ende / Auswertung ---
+function endStory(){
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("story").innerHTML = storySequence.join("<br><br>");
+    document.getElementById("summary").innerText = "Die Geschichte ist vorbei. Deine Entscheidungen: " + path.join(" → ");
+    document.getElementById("question").innerHTML = "Wie spannend fandest du die Geschichte?<br><button onclick='alert(\"Danke für dein Feedback!\")'>Sehr spannend</button> <button onclick='alert(\"Danke für dein Feedback!\")'>Neutral</button> <button onclick='alert(\"Danke für dein Feedback!\")'>Nicht spannend</button>";
+}
+
+// --- Initialisierung ---
+showStart();
+</script>
+
+</body>
+</html>
